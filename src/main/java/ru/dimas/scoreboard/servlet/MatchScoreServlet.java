@@ -1,12 +1,12 @@
 package ru.dimas.scoreboard.servlet;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import ru.dimas.scoreboard.hibernate.HibernateMatchResult;
 import ru.dimas.scoreboard.hibernate.HibernatePlayers;
-import ru.dimas.scoreboard.model.Player;
-import ru.dimas.scoreboard.repository.InitializationDataBase;
-import ru.dimas.scoreboard.repository.PlayersDatabase;
+import ru.dimas.scoreboard.model.*;
 
 import java.io.*;
 import java.sql.*;
@@ -17,7 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 
-@WebServlet(name = "matchScoreServlet", value = "/match-score")
+@WebServlet(name = "matchScoreServlet", value = "/matchScoreServlet")
 public class MatchScoreServlet extends HttpServlet {
 
 //    public void init() throws ServletException {
@@ -26,47 +26,42 @@ public class MatchScoreServlet extends HttpServlet {
 //    }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        System.out.println("/match-score get");
-//        response.setContentType("text/html");
+        System.out.println("/matchScoreServlet get");
 
-//        String path = "/new-match.jsp";
-//        ServletContext servletContext = getServletContext();
-//        RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(path);
-//        requestDispatcher.forward(request, response);
-        // Hello
-//        PrintWriter out = response.getWriter();
-//        out.println("<html><body>");
-//        out.println("<h1>" + message + "</h1>");
-//        out.println("</body></html>");
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        System.out.println("/match-score post");
-        HibernatePlayers.saveUser(request.getParameter("playerOne"));
-        HibernatePlayers.saveUser(request.getParameter("playerTwo"));
+        System.out.println("/matchScoreServlet post");
+        String nameOne = request.getParameter("playerOne");
+        String nameTwo = request.getParameter("playerTwo");
 
-        for (Player pl:HibernatePlayers.getUserList()){
-            System.out.println(pl);
+        Integer UUID = Matches.getSelectedUUID();
+        System.out.println(UUID);
+        if (Matches.getMatchScoreMap().get(UUID)==null){
+            response.sendRedirect("/matches");
+            return;
         }
-//        Configuration configuration = new Configuration().addAnnotatedClass(Player.class);
-//
-//        SessionFactory sessionFactory = configuration.buildSessionFactory();
-//        Session session = sessionFactory.getCurrentSession();
-//
-//        try {
-//            session.beginTransaction();
-//            Player player1 = new Player(request.getParameter("playerTwo"));
-//            Player player2 = new Player(request.getParameter("playerTwo"));
-//
-//            session.persist(player1);
-//            session.persist(player2);
-//            session.getTransaction().commit();
-//        }
-//        finally {
-//            sessionFactory.close();
-//        }
-        response.sendRedirect("match-score.jsp");
-
+        if (!(nameOne==null)){
+            Matches.getMatchScoreMap().get(UUID).matchStep(Point.ONE);
+        }
+        if (!(nameTwo==null)){
+            Matches.getMatchScoreMap().get(UUID).matchStep(Point.TWO);
+        }
+        if (Matches.getMatchScoreMap().get(UUID).getEndMatch()){
+            HibernateMatchResult.saveSelectedMatchResult(nameOne);
+            if (Matches.getMatchScoreMap()!=null){
+                for (Integer ID:Matches.getMatchScoreMap().keySet()){
+                    Matches.setSelectedUUID(ID);
+                    break;
+                }
+            }
+            else {
+                response.sendRedirect("/");
+                return;
+            }
+            response.sendRedirect("/matches");
+            return;
+        }
+        response.sendRedirect("/match-score");
     }
-
 }

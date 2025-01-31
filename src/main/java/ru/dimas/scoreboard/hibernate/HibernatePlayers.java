@@ -7,7 +7,7 @@ import java.util.List;
 
 public class HibernatePlayers {
 
-    public static void saveUser(String name) {
+    public static void savePlayer(String name) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
         List playerList = session.createQuery("FROM Player t WHERE t.name=:name")
@@ -21,14 +21,14 @@ public class HibernatePlayers {
         session.close();
     }
 
-    public static Player getUserById(Long id) {
+    public static Player getPlayerById(Long id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Player player = session.get(Player.class, id);
         session.close();
         return player;
     }
 
-    public static Player getUserByName(String name) {
+    public static Player getPlayerByName(String name) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Player player = (Player) session.createQuery("FROM Player t WHERE t.name=:name").
                 setParameter("name", name).
@@ -37,7 +37,7 @@ public class HibernatePlayers {
         return player;
     }
 
-    public static List<Player> getUserList() {
+    public static List<Player> getPlayerList() {
         List playerList = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
         playerList = session.createQuery("FROM Player").getResultList();

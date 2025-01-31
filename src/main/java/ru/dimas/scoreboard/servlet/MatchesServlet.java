@@ -7,27 +7,26 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 
-@WebServlet(name = "matchesServlet", value = "/matches.jsp")
+@WebServlet(name = "matchesServlet", value = "/matchesServlet")
 public class MatchesServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         System.out.println("/matches get");
+//        System.out.println(request.getParameter("playerName"));
 
-//        response.setContentType("text/html");
+        if (request.getParameter("playerName").equals("") || request.getParameter("playerName").isEmpty()){
 
-//        String path = "/new-match.jsp";
-//        ServletContext servletContext = getServletContext();
-//        RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(path);
-//        requestDispatcher.forward(request, response);
-        // Hello
-//        PrintWriter out = response.getWriter();
-//        out.println("<html><body>");
-//        out.println("<h1>" + message + "</h1>");
-//        out.println("</body></html>");
+        }
+
+
+
+
+
+
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        System.out.println("/matches get");
+        System.out.println("/matches post");
 //        ServletContext servletContext = getServletContext();
 //        RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher("/match-score.jsp");
 //        requestDispatcher.forward(request, response);
